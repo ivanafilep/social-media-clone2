@@ -69,7 +69,6 @@ public class RegUserServiceImpl implements RegUserService{
 
 
 		
-		regUserRepository.save(newRegularUser);
 		
 
 		return new ResponseEntity<UserDTO>(HttpStatus.CREATED);

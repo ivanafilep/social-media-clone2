@@ -25,10 +25,4 @@ public class RegUserController {
 	public ResponseEntity<?> createRegularUser(@Valid @RequestBody UserDTO newUser, Authentication authentication) {
 		return regUserService.createRegularUser(newUser, authentication);
 	}
-	
-	
-	
-	
-	
-
 }
