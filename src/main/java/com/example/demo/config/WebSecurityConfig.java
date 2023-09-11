@@ -1,4 +1,4 @@
-package config;
+package com.example.demo.config;
 
 import javax.crypto.SecretKey;
 
@@ -41,7 +41,10 @@ public class WebSecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.cors().and()
 				.csrf().disable()
-				.addFilterAfter(new JWTAuthorizationFilter(secretKey), UsernamePasswordAuthenticationFilter.class)
+				.requestMatchers()
+				.antMatchers("socialMedia/login")
+				.and()
+				.addFilterAfter(new JWTAuthorizationFilter(secretKey), UsernamePasswordAuthenticationFilter.class)				
 				.authorizeRequests()
 				.anyRequest().authenticated();
 		return http.build();
