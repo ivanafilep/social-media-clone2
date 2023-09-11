@@ -1,4 +1,4 @@
-package controllers;
+package com.example.demo.controllers;
 
 import java.sql.Date;
 import java.util.List;
@@ -15,11 +15,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import dto.userTokenDTO;
-import entities.UserEntity;
+
+import com.example.demo.dto.userTokenDTO;
+import com.example.demo.entities.UserEntity;
+import com.example.demo.repositories.UserRepository;
+import com.example.demo.services.RegUserService;
+import com.example.demo.services.RegUserServiceImpl;
+import com.example.demo.util.Encryption;
+
 import io.jsonwebtoken.Jwts;
-import repositories.UserRepository;
-import util.Encryption;
 
 
 @RestController
