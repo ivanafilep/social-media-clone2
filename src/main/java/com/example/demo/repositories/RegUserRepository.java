@@ -1,9 +1,7 @@
 package com.example.demo.repositories;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-
+import org.springframework.data.repository.CrudRepository;
 import com.example.demo.entities.RegularUser;
 
-public interface RegUserRepository extends JpaRepository<RegularUser, Integer> {
+public interface RegUserRepository extends CrudRepository<RegularUser, Integer> {
 
 }

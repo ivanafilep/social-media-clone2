@@ -1,5 +1,5 @@
 package com.example.demo.services;
 
-public class AdminUserServiceImpl {
+public interface AdminService {
 
 }
