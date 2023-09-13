@@ -5,12 +5,20 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import com.example.demo.dto.ProfileUserDTO;
+import com.example.demo.dto.UpdatedUserDTO;
 import com.example.demo.dto.UserDTO;
 import com.example.demo.entities.RegularUser;
 import com.example.demo.entities.UserEntity;
+import com.example.demo.exceptions.UserDoesntExist;
 import com.example.demo.exceptions.UserWithEmailExistsException;
+import com.example.demo.exceptions.UserWithLastNameException;
+import com.example.demo.exceptions.UserWithNameException;
 import com.example.demo.exceptions.UserWithUsernameExistsException;
 import com.example.demo.repositories.RegUserRepository;
 import com.example.demo.repositories.UserRepository;
@@ -71,38 +79,45 @@ public class RegUserServiceImpl implements RegUserService{
 		return new ResponseEntity<UserDTO>(HttpStatus.CREATED);
 
 	}
-	
 
-
-	public ResponseEntity<UserDTO> updateRegularUser(UserDTO updatedUser, Integer id) {
+	public UpdatedUserDTO updateRegularUser(UpdatedUserDTO updatedUser, Authentication authentication) throws UserWithEmailExistsException, UserWithUsernameExistsException, UserWithNameException, UserWithLastNameException {
 		
-		Optional<RegularUser> changeUser = regUserRepository.findById(id);
-	
-		
-		String email = "filepivana@gmail.com";//(String) authentication.getName();
+		String email = (String) authentication.getName();
 		UserEntity currentUser = userRepository.findByEmail(email);
-	
-		
-		if (currentUser.getRole().equals("ROLE_REGULAR_USER")) {
-			RegularUser regularUser = (RegularUser) currentUser;
-
-			if (regularUser.getId().equals(changeUser.get().getId())) {
 				
 			
-			changeUser.get().setEmail(updatedUser.getEmail());
-			changeUser.get().setUsername(updatedUser.getUsername());
-			changeUser.get().setPassword(updatedUser.getPassword());
-			changeUser.get().setName(updatedUser.getName());
-			changeUser.get().setLastName(updatedUser.getLastName());
-			regUserRepository.save(changeUser.get());
-			
-			return new ResponseEntity<UserDTO>(HttpStatus.OK);
-			
-			}
+		currentUser.setEmail(updatedUser.getEmail());
 		
-		} return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		currentUser.setUsername(updatedUser.getUsername());
+		if (!updatedUser.getUsername().equals(currentUser.getUsername())) {
+	        currentUser.setUsername(updatedUser.getUsername());
+	    }
+
+		currentUser.setName(updatedUser.getName());
+		if (!updatedUser.getName().equals(currentUser.getName())) {
+	        currentUser.setName(updatedUser.getName());
+	    }
+		currentUser.setLastName(updatedUser.getLastName());
+		if (!updatedUser.getLastName().equals(currentUser.getLastName())) {
+	        currentUser.setLastName(updatedUser.getLastName());
+	    }
+		
+		userRepository.save(currentUser);
+			
+		return updatedUser;
 	
 	}	
+	
+	
+	public Optional<RegularUser> getRegularUserById(@PathVariable Integer id) throws UserDoesntExist {
+		Optional<RegularUser> user = regUserRepository.findById(id);
+		
+		if (user.isEmpty()) {
+			throw new UserDoesntExist ("User does not found.");
+		}
+		return user;
+	}
+	
 }
 
 		
