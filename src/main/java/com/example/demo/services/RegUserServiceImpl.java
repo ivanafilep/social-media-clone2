@@ -118,6 +118,30 @@ public class RegUserServiceImpl implements RegUserService{
 		return user;
 	}
 	
+	
+	public UserEntity followUser(@PathVariable Integer id, Authentication authentication) {
+	    String email = (String) authentication.getName();
+	    UserEntity currentUser = userRepository.findByEmail(email);
+
+	    Optional<UserEntity> userToFollowing = userRepository.findById(id);
+
+	    if (userToFollowing.isPresent()) {
+	        UserEntity userToFollow = userToFollowing.get();
+
+	       
+	        userToFollow.getFollowers().add(currentUser);
+	        userRepository.save(userToFollow);
+
+	        
+	        
+	        currentUser.getFollowing().add(userToFollow);
+	        userRepository.save(currentUser);
+	        
+
+	        
+	    } return currentUser; 
+	        
+	}
 }
 
 		

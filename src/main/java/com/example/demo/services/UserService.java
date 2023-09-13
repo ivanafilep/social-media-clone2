@@ -30,7 +30,7 @@ public class UserService {
             return ResponseEntity.badRequest().body("Korisnik sa zadatim email-om ne postoji.");
         }
 
-        String newPassword = "lozinkica"; //generateNewPassword();
+        String newPassword = "lozinkica"; 
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
         
@@ -40,7 +40,7 @@ public class UserService {
         email.setText("Vaša nova lozinka je: " + newPassword);
         emailService.sendSimpleMessage(email);
         
-        // ne vraca se u servisima responseEntity
+        
         return ResponseEntity.ok("Nova lozinka je poslata na vaš email.");
 	}
 
