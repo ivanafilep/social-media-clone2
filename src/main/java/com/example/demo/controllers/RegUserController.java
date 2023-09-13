@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.example.demo.dto.ProfileUserDTO;
 import com.example.demo.dto.UpdatedUserDTO;
 import com.example.demo.dto.UserDTO;
 import com.example.demo.exceptions.UserDoesntExist;
@@ -49,6 +47,12 @@ public class RegUserController {
 	@RequestMapping(path = "/{id}", method = RequestMethod.GET)
 	public ResponseEntity<?> getRegularUserById(@PathVariable Integer id) throws UserDoesntExist {
 		return new ResponseEntity<>(regUserService.getRegularUserById(id), HttpStatus.OK);
+	}
+	
+	
+	@RequestMapping(path= "/follow/{id}", method = RequestMethod.POST)
+	public ResponseEntity<?> followUser (@PathVariable Integer id, Authentication authentication) {
+		return new ResponseEntity<>(regUserService.followUser(id, authentication), HttpStatus.OK);
 	}
 		
 	
