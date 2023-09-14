@@ -1,5 +1,5 @@
 package com.example.demo.services;
 
-public interface UserService {
+public interface CommentService {
 
 }

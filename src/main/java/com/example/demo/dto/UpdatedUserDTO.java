@@ -4,6 +4,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import com.example.demo.entities.User;
+
 public class UpdatedUserDTO {
 	
 	private Integer id;
@@ -36,17 +38,13 @@ public class UpdatedUserDTO {
 	}
 
 	
-	public UpdatedUserDTO(Integer id,
-			@NotNull(message = "Email must be included.") @Pattern(regexp = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$", message = "Email is not valid.") String email,
-			@NotNull(message = "Username must be specified") @Size(min = 2, max = 30, message = "User name must be between {min} and {max} characters long.") String username,
-			@NotNull(message = "Name must be included.") @Size(min = 2, max = 30, message = "Name must be between {min} and {max} characters long.") String name,
-			@NotNull(message = "Lastname must be included.") @Size(min = 2, max = 30, message = "Lastname must be between {min} and {max} characters long.") String lastName) {
+	public UpdatedUserDTO(User u) {
 		super();
-		this.id = id;
-		this.email = email;
-		this.username = username;
-		this.name = name;
-		this.lastName = lastName;
+		this.id = u.getId();
+		this.email = u.getEmail();
+		this.username = u.getUsername();
+		this.name = u.getName();
+		this.lastName = u.getLastName();
 	}
 
 
@@ -98,7 +96,8 @@ public class UpdatedUserDTO {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
-	
+
+
 	
 	
 	

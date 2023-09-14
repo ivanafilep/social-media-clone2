@@ -4,14 +4,15 @@ import org.springframework.security.core.Authentication;
 
 import com.example.demo.dto.UpdatedUserDTO;
 import com.example.demo.dto.UserDTO;
+import com.example.demo.exceptions.ConfirmedPasswordException;
 import com.example.demo.exceptions.UserWithEmailExistsException;
 import com.example.demo.exceptions.UserWithLastNameException;
 import com.example.demo.exceptions.UserWithNameException;
 import com.example.demo.exceptions.UserWithUsernameExistsException;
 
-public interface RegUserService {
+public interface RegularUserService {
 
-	ResponseEntity<UserDTO> createRegularUser(UserDTO newUser) throws UserWithEmailExistsException, UserWithUsernameExistsException;
+	UserDTO create(UserDTO newUser) throws UserWithEmailExistsException, UserWithUsernameExistsException, ConfirmedPasswordException;
 
-	UpdatedUserDTO updateRegularUser(UpdatedUserDTO updatedUser, Authentication authentication) throws UserWithEmailExistsException, UserWithUsernameExistsException, UserWithNameException, UserWithLastNameException;
+	UpdatedUserDTO update(UpdatedUserDTO updatedUser, String name) throws UserWithEmailExistsException, UserWithUsernameExistsException, UserWithNameException, UserWithLastNameException;
 }
