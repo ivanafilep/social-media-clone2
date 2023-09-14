@@ -53,7 +53,7 @@ public class WebSecurityConfig {
 				http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 				
 				http.authorizeRequests()
-				.antMatchers(HttpMethod.POST, "/project/regularuser").permitAll()
+				.antMatchers(HttpMethod.POST, "/project/regularusers").permitAll()
 				.antMatchers(HttpMethod.POST, "/social-media/login").permitAll()
 				.antMatchers(HttpMethod.PUT, "/forgot-password").permitAll()
 				.anyRequest().authenticated();

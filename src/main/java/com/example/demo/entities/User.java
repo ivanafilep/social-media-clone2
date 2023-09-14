@@ -30,81 +30,81 @@ import javax.persistence.JoinColumn;
 @Table(name = "user")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-public class UserEntity {
+public class User {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
-	@Column
+	
 	@NotNull(message = "Email must be included.")
 	@Pattern(regexp = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
 			+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$", message = "Email is not valid.")
 	private String email;
 
-	@Column
+	
 	@NotNull(message = "Username must be specified")
 	@Size(min = 2, max = 30, message = "User name must be between {min} and {max} characters long.")
 	private String username;
 
-	@Column
+	
 	@Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d).{8,}$", message = "Password must be at least 8 characters long and contain a lowercase, an upercase letter and a number")
 	@NotNull(message = "Password must be specified")
 	@Size(min = 8, max = 100, message = "Password must be between {min} and {max} characters long.")
 	private String password;
 
-	@Column
+	
 	@Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d).{8,}$", message = "Password must be at least 8 characters long and contain a lowercase, an upercase letter and a number")
 	@NotNull(message = "Password must be specified")
 	@Size(min = 8, max = 100, message = "Password must be between {min} and {max} characters long.")
 	private String confirmedPassword;
 
-	@Column
+	
 	@NotNull(message = "Name must be included.")
 	@Size(min = 2, max = 30, message = "Name must be between {min} and {max} characters long.")
 	private String name;
 
-	@Column
+	
 	@NotNull(message = "Lastname must be included.")
 	@Size(min = 2, max = 30, message = "Lastname must be between {min} and {max} characters long.")
 	private String lastName;
 
-	@Column
+	
 	private String role;
-
-	@Version
-	private Integer version;
 
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "user_following_followers", joinColumns = @JoinColumn(name = "follower_id"), 
 	inverseJoinColumns = @JoinColumn(name = "following_id"))
-	
-	private Set<UserEntity> following = new HashSet<>();
+	private Set<User> following = new HashSet<>();
 	
 	@JsonIgnore
 	@ManyToMany(mappedBy = "following", fetch = FetchType.LAZY)
-	private Set<UserEntity> followers = new HashSet<>();
+	private Set<User> followers = new HashSet<>();
 	
 	
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {
 			CascadeType.REFRESH })
 			private Set<Post> posts = new HashSet<Post>();
+	
+	
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {
+			CascadeType.REFRESH })
+			private Set<Comment> comments = new HashSet<Comment>();
 
 
-	public UserEntity() {
+	public User() {
 
 	}
 
-	public UserEntity(Integer id,
+	public User(Integer id,
 			@NotNull(message = "Email must be included.") @Pattern(regexp = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$", message = "Email is not valid.") String email,
 			@NotNull(message = "Username must be specified") @Size(min = 2, max = 30, message = "User name must be between {min} and {max} characters long.") String username,
 			@Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d).{8,}$", message = "Password must be at least 8 characters long and contain a lowercase, an upercase letter and a number") @NotNull(message = "Password must be specified") @Size(min = 8, max = 100, message = "Password must be between {min} and {max} characters long.") String password,
 			@Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d).{8,}$", message = "Password must be at least 8 characters long and contain a lowercase, an upercase letter and a number") @NotNull(message = "Password must be specified") @Size(min = 8, max = 100, message = "Password must be between {min} and {max} characters long.") String confirmedPassword,
 			@NotNull(message = "Name must be included.") @Size(min = 2, max = 30, message = "Name must be between {min} and {max} characters long.") String name,
 			@NotNull(message = "Lastname must be included.") @Size(min = 2, max = 30, message = "Lastname must be between {min} and {max} characters long.") String lastName,
-			String role, Integer version, Set<UserEntity> following, Set<UserEntity> followers,
-			Set<Post> posts) {
+			String role, Set<User> following, Set<User> followers, Set<Post> posts, Set<Comment> comments) {
 		super();
 		this.id = id;
 		this.email = email;
@@ -114,13 +114,11 @@ public class UserEntity {
 		this.name = name;
 		this.lastName = lastName;
 		this.role = role;
-		this.version = version;
 		this.following = following;
 		this.followers = followers;
 		this.posts = posts;
+		this.comments = comments;
 	}
-
-
 
 
 	public Integer getId() {
@@ -202,33 +200,22 @@ public class UserEntity {
 		this.role = role;
 	}
 
-
-	public Integer getVersion() {
-		return version;
-	}
-
-
-	public void setVersion(Integer version) {
-		this.version = version;
-	}
-
-
-	public Set<UserEntity> getFollowing() {
+	public Set<User> getFollowing() {
 		return following;
 	}
 
 
-	public void setFollowing(Set<UserEntity> following) {
+	public void setFollowing(Set<User> following) {
 		this.following = following;
 	}
 
 
-	public Set<UserEntity> getFollowers() {
+	public Set<User> getFollowers() {
 		return followers;
 	}
 
 
-	public void setFollowers(Set<UserEntity> followers) {
+	public void setFollowers(Set<User> followers) {
 		this.followers = followers;
 	}
 
@@ -238,6 +225,14 @@ public class UserEntity {
 
 	public void setPosts(Set<Post> posts) {
 		this.posts = posts;
+	}
+
+	public Set<Comment> getComments() {
+		return comments;
+	}
+
+	public void setComments(Set<Comment> comments) {
+		this.comments = comments;
 	}
 
 	

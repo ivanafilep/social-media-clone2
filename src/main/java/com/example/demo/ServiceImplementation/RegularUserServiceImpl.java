@@ -1,4 +1,4 @@
-package com.example.demo.services;
+package com.example.demo.ServiceImplementation;
 
 import java.util.Optional;
 import javax.validation.Valid;
@@ -14,25 +14,28 @@ import com.example.demo.dto.ProfileUserDTO;
 import com.example.demo.dto.UpdatedUserDTO;
 import com.example.demo.dto.UserDTO;
 import com.example.demo.entities.RegularUser;
-import com.example.demo.entities.UserEntity;
+import com.example.demo.entities.User;
+import com.example.demo.exceptions.ConfirmedPasswordException;
 import com.example.demo.exceptions.UserDoesntExist;
 import com.example.demo.exceptions.UserWithEmailExistsException;
 import com.example.demo.exceptions.UserWithLastNameException;
 import com.example.demo.exceptions.UserWithNameException;
 import com.example.demo.exceptions.UserWithUsernameExistsException;
-import com.example.demo.repositories.RegUserRepository;
+import com.example.demo.repositories.RegularUserRepository;
 import com.example.demo.repositories.UserRepository;
+import com.example.demo.services.RegularUserService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Service
-public class RegUserServiceImpl implements RegUserService{
+public class RegularUserServiceImpl implements RegularUserService{
 	
 	@Autowired
 	private UserRepository userRepository;
 	
 	@Autowired
-	private RegUserRepository regUserRepository;
+	private RegularUserRepository regUserRepository;
 	
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -41,11 +44,11 @@ public class RegUserServiceImpl implements RegUserService{
 	
 	
 	
-	public ResponseEntity<UserDTO> createRegularUser(@Valid UserDTO newUser) throws UserWithEmailExistsException, UserWithUsernameExistsException {
+	public UserDTO create(UserDTO newUser) throws UserWithEmailExistsException, UserWithUsernameExistsException, ConfirmedPasswordException {
 
-		UserEntity existingUserWithEmail = userRepository.findByEmail(newUser.getEmail());
+		User existingUserWithEmail = userRepository.findByEmail(newUser.getEmail());
 
-		UserEntity existingUserWithUsername = userRepository.findByUsername(newUser.getUsername());
+		User existingUserWithUsername = userRepository.findByUsername(newUser.getUsername());
 	
 		if (existingUserWithEmail != null) {
 			throw new UserWithEmailExistsException("User with email already exists!");
@@ -60,30 +63,33 @@ public class RegUserServiceImpl implements RegUserService{
 
 		newRegularUser.setEmail(newUser.getEmail());
 		newRegularUser.setUsername(newUser.getUsername());
-		newRegularUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
-		newRegularUser.setConfirmedPassword(passwordEncoder.encode(newUser.getPassword()));
-		/*
+		
+		
 		if(newUser.getPassword().equals(newUser.getConfirmedPassword())){
 			newRegularUser.setPassword(newUser.getPassword());
 		} else {
-			return new ResponseEntity<UserDTO>(HttpStatus.BAD_REQUEST);
+			throw new ConfirmedPasswordException ("Confirmed password does not match with password");
+			
+			
 		}
-		*/
-	
+		
+		
+		newRegularUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+		newRegularUser.setConfirmedPassword(passwordEncoder.encode(newUser.getPassword()));
 		newRegularUser.setName(newUser.getName());
 		newRegularUser.setLastName(newUser.getLastName());
 		newRegularUser.setRole("ROLE_REGULAR_USER");
 
 		regUserRepository.save(newRegularUser);
 	
-		return new ResponseEntity<UserDTO>(HttpStatus.CREATED);
+		return newUser;
 
 	}
 
-	public UpdatedUserDTO updateRegularUser(UpdatedUserDTO updatedUser, Authentication authentication) throws UserWithEmailExistsException, UserWithUsernameExistsException, UserWithNameException, UserWithLastNameException {
+	public UpdatedUserDTO update(UpdatedUserDTO updatedUser, String name) throws UserWithEmailExistsException, UserWithUsernameExistsException, UserWithNameException, UserWithLastNameException {
 		
-		String email = (String) authentication.getName();
-		UserEntity currentUser = userRepository.findByEmail(email);
+		
+		User currentUser = userRepository.findByEmail(name);
 				
 			
 		currentUser.setEmail(updatedUser.getEmail());
@@ -109,7 +115,7 @@ public class RegUserServiceImpl implements RegUserService{
 	}	
 	
 	
-	public Optional<RegularUser> getRegularUserById(@PathVariable Integer id) throws UserDoesntExist {
+	public Optional<RegularUser> getById(Integer id) throws UserDoesntExist {
 		Optional<RegularUser> user = regUserRepository.findById(id);
 		
 		if (user.isEmpty()) {
@@ -119,20 +125,19 @@ public class RegUserServiceImpl implements RegUserService{
 	}
 	
 	
-	public UserEntity followUser(@PathVariable Integer id, Authentication authentication) {
-	    String email = (String) authentication.getName();
-	    UserEntity currentUser = userRepository.findByEmail(email);
+	public User followUser(Integer id, String name) {
+	    
+	    User currentUser = userRepository.findByEmail(name);
 
-	    Optional<UserEntity> userToFollowing = userRepository.findById(id);
+	    Optional<User> userToFollowing = userRepository.findById(id);
 
 	    if (userToFollowing.isPresent()) {
-	        UserEntity userToFollow = userToFollowing.get();
+	        User userToFollow = userToFollowing.get();
 
 	       
 	        userToFollow.getFollowers().add(currentUser);
 	        userRepository.save(userToFollow);
 
-	        
 	        
 	        currentUser.getFollowing().add(userToFollow);
 	        userRepository.save(currentUser);

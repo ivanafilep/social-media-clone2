@@ -1,4 +1,4 @@
-package com.example.demo.services;
+package com.example.demo.ServiceImplementation;
 
 import java.util.Optional;
 
@@ -12,10 +12,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.example.demo.dto.UserDTO;
-import com.example.demo.entities.AdminEntity;
-import com.example.demo.entities.UserEntity;
+import com.example.demo.entities.Admin;
+import com.example.demo.entities.User;
 import com.example.demo.repositories.AdminRepository;
 import com.example.demo.repositories.UserRepository;
+import com.example.demo.services.AdminService;
 
 @Service
 public class AdminServiceImpl implements AdminService {
@@ -32,8 +33,8 @@ public class AdminServiceImpl implements AdminService {
 	public ResponseEntity<UserDTO> createAdmin(@Valid UserDTO newUser) {
 
 			
-			UserEntity existingUserWithEmail = userRepository.findByEmail(newUser.getEmail());
-			UserEntity existingUserWithUsername = userRepository.findByUsername(newUser.getUsername());
+			User existingUserWithEmail = userRepository.findByEmail(newUser.getEmail());
+			User existingUserWithUsername = userRepository.findByUsername(newUser.getUsername());
 			
 
 			if (existingUserWithEmail != null) {
@@ -45,7 +46,7 @@ public class AdminServiceImpl implements AdminService {
 			}
 
 			
-			AdminEntity newAdmin = new AdminEntity();
+			Admin newAdmin = new Admin();
 
 			newAdmin.setEmail(newUser.getEmail());
 			newAdmin.setUsername(newUser.getUsername());
@@ -67,7 +68,7 @@ public class AdminServiceImpl implements AdminService {
 	}
 	
 	public ResponseEntity<?> updateAdmin( UserDTO updatedAdmin,Integer id) {
-		Optional<AdminEntity> admin = adminRepository.findById(id);
+		Optional<Admin> admin = adminRepository.findById(id);
 		
 		if (admin.isEmpty()) {
 			return new ResponseEntity<>("Chef not found in the database", HttpStatus.NOT_FOUND);
