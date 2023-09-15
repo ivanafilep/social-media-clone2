@@ -1,16 +1,12 @@
-package com.example.demo.ServiceImplementation;
+package com.example.demo.services.implementation;
 
 import java.util.Optional;
-import javax.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
-import com.example.demo.dto.ProfileUserDTO;
 import com.example.demo.dto.UpdatedUserDTO;
 import com.example.demo.dto.UserDTO;
 import com.example.demo.entities.RegularUser;
@@ -25,29 +21,28 @@ import com.example.demo.repositories.RegularUserRepository;
 import com.example.demo.repositories.UserRepository;
 import com.example.demo.services.RegularUserService;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 @Service
 public class RegularUserServiceImpl implements RegularUserService{
 	
-	@Autowired
-	private UserRepository userRepository;
+	private final UserRepository userRepository;
+
+	private final RegularUserRepository regUserRepository;
 	
-	@Autowired
-	private RegularUserRepository regUserRepository;
-	
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
 	protected final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
 	
+	public RegularUserServiceImpl(UserRepository userRepository, RegularUserRepository regUserRepository,
+			PasswordEncoder passwordEncoder) {
+		this.userRepository = userRepository;
+		this.regUserRepository = regUserRepository;
+		this.passwordEncoder = passwordEncoder;
+	}
 	
-	
+	@Override
 	public UserDTO create(UserDTO newUser) throws UserWithEmailExistsException, UserWithUsernameExistsException, ConfirmedPasswordException {
 
 		User existingUserWithEmail = userRepository.findByEmail(newUser.getEmail());
-
 		User existingUserWithUsername = userRepository.findByUsername(newUser.getUsername());
 	
 		if (existingUserWithEmail != null) {
@@ -57,23 +52,15 @@ public class RegularUserServiceImpl implements RegularUserService{
 		if (existingUserWithUsername != null) {
 			throw new UserWithUsernameExistsException("User with username already exists!");
 		}
-
 		
-		RegularUser newRegularUser = new RegularUser();
-
-		newRegularUser.setEmail(newUser.getEmail());
-		newRegularUser.setUsername(newUser.getUsername());
-		
-		
-		if(newUser.getPassword().equals(newUser.getConfirmedPassword())){
-			newRegularUser.setPassword(newUser.getPassword());
-		} else {
+		if(!newUser.getPassword().equals(newUser.getConfirmedPassword())) {
 			throw new ConfirmedPasswordException ("Confirmed password does not match with password");
-			
-			
 		}
 		
-		
+		RegularUser newRegularUser = new RegularUser();
+		newRegularUser.setEmail(newUser.getEmail());
+		newRegularUser.setUsername(newUser.getUsername());
+		newRegularUser.setPassword(newUser.getPassword());
 		newRegularUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
 		newRegularUser.setConfirmedPassword(passwordEncoder.encode(newUser.getPassword()));
 		newRegularUser.setName(newUser.getName());
@@ -86,6 +73,7 @@ public class RegularUserServiceImpl implements RegularUserService{
 
 	}
 
+	@Override
 	public UpdatedUserDTO update(UpdatedUserDTO updatedUser, String name) throws UserWithEmailExistsException, UserWithUsernameExistsException, UserWithNameException, UserWithLastNameException {
 		
 		
@@ -112,9 +100,9 @@ public class RegularUserServiceImpl implements RegularUserService{
 			
 		return updatedUser;
 	
-	}	
+	}
 	
-	
+	@Override
 	public Optional<RegularUser> getById(Integer id) throws UserDoesntExist {
 		Optional<RegularUser> user = regUserRepository.findById(id);
 		
@@ -124,7 +112,7 @@ public class RegularUserServiceImpl implements RegularUserService{
 		return user;
 	}
 	
-	
+	@Override
 	public User followUser(Integer id, String name) {
 	    
 	    User currentUser = userRepository.findByEmail(name);

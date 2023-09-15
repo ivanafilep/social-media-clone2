@@ -8,6 +8,6 @@ import com.example.demo.entities.Post;
 
 public interface PostRepository extends CrudRepository<Post, Integer>{
 
-	void save(Optional<Post> post);
+	//void save(Optional<Post> post);
 
 }

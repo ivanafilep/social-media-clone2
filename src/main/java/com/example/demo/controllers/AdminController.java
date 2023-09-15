@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.ServiceImplementation.AdminServiceImpl;
 import com.example.demo.dto.UserDTO;
+import com.example.demo.services.implementation.AdminServiceImpl;
 
 @RestController
 @RequestMapping(path = "project/admin")

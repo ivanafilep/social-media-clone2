@@ -78,7 +78,6 @@ public class User {
 	inverseJoinColumns = @JoinColumn(name = "following_id"))
 	private Set<User> following = new HashSet<>();
 	
-	@JsonIgnore
 	@ManyToMany(mappedBy = "following", fetch = FetchType.LAZY)
 	private Set<User> followers = new HashSet<>();
 	
@@ -91,6 +90,12 @@ public class User {
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {
 			CascadeType.REFRESH })
 			private Set<Comment> comments = new HashSet<Comment>();
+	
+	
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {
+			CascadeType.REFRESH })
+			private Set<Reaction> reactions = new HashSet<Reaction>();
+	
 
 
 	public User() {
@@ -104,7 +109,8 @@ public class User {
 			@Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d).{8,}$", message = "Password must be at least 8 characters long and contain a lowercase, an upercase letter and a number") @NotNull(message = "Password must be specified") @Size(min = 8, max = 100, message = "Password must be between {min} and {max} characters long.") String confirmedPassword,
 			@NotNull(message = "Name must be included.") @Size(min = 2, max = 30, message = "Name must be between {min} and {max} characters long.") String name,
 			@NotNull(message = "Lastname must be included.") @Size(min = 2, max = 30, message = "Lastname must be between {min} and {max} characters long.") String lastName,
-			String role, Set<User> following, Set<User> followers, Set<Post> posts, Set<Comment> comments) {
+			String role, Set<User> following, Set<User> followers, Set<Post> posts, Set<Comment> comments,
+			Set<Reaction> reactions) {
 		super();
 		this.id = id;
 		this.email = email;
@@ -118,7 +124,9 @@ public class User {
 		this.followers = followers;
 		this.posts = posts;
 		this.comments = comments;
+		this.reactions = reactions;
 	}
+
 
 
 	public Integer getId() {
@@ -235,8 +243,12 @@ public class User {
 		this.comments = comments;
 	}
 
-	
-	
+	public Set<Reaction> getReactions() {
+		return reactions;
+	}
 
+	public void setReactions(Set<Reaction> reactions) {
+		this.reactions = reactions;
+	}
 	
 }

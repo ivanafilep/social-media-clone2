@@ -1,35 +1,37 @@
-package com.example.demo.ServiceImplementation;
+package com.example.demo.services.implementation;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.demo.entities.Email;
 import com.example.demo.entities.Post;
 import com.example.demo.entities.User;
 import com.example.demo.exceptions.UserWithEmailExistsException;
 import com.example.demo.repositories.UserRepository;
+import com.example.demo.services.EmailService;
 import com.example.demo.services.UserService;
 
 @Service
 public class UserServiceImpl implements UserService{
 	
-	@Autowired
-	private EmailServiceImpl emailService;
+	private final EmailService emailService;
 
-	@Autowired
-	private UserRepository userRepository;
+	private final UserRepository userRepository;
 	
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-	
+    private final PasswordEncoder passwordEncoder;
     
+    public UserServiceImpl(EmailService emailService, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+		super();
+		this.emailService = emailService;
+		this.userRepository = userRepository;
+		this.passwordEncoder = passwordEncoder;
+	}
+	
+    @Override
 	public String updatePassword (String emailAddress) throws UserWithEmailExistsException{
 		
 		User user = userRepository.findByEmail(emailAddress);
@@ -48,14 +50,12 @@ public class UserServiceImpl implements UserService{
         email.setText("Vaša nova lozinka je: " + newPassword);
         emailService.sendSimpleMessage(email);
         
-        
         return "Nova lozinka je poslata na vaš email.";
 	}
-
-	
+    
 	//dodaj PostDTO
+	@Override
 	public List<Post> getHomepage(String name) {
-
 		User currentUser = userRepository.findByEmail(name);
 
 		Set<User> following = currentUser.getFollowing();

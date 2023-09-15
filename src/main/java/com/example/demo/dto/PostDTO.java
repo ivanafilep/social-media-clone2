@@ -1,13 +1,17 @@
 package com.example.demo.dto;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.Size;
 
 import com.example.demo.entities.Comment;
 import com.example.demo.entities.Post;
+import com.example.demo.entities.Reaction;
 import com.example.demo.entities.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class PostDTO {
 	
@@ -16,15 +20,15 @@ public class PostDTO {
 	@Size(min = 2, max = 100, message = "Title must be between {min} and {max} characters long.")
 	private String title;
 	
-	
 	private String content;
-	
 	
 	private Date dateCreated;
 
 	private User user;
 	
-	private Set<Comment> comments;
+//	private Set<CommentDTO> comments = new HashSet<CommentDTO>();
+	
+	private Set<ReactionDTO> reactions = new HashSet<ReactionDTO>();
 
 	public PostDTO() {
 		
@@ -37,7 +41,8 @@ public class PostDTO {
 		this.content  = p.getContent();
 		this.dateCreated = p.getDateCreated();
 		this.user = p.getUser();
-		this.comments= p.getComments();
+		this.reactions= p.getReactions().stream().map(reactions -> new ReactionDTO(reactions)).collect(Collectors.toSet());
+		//this.comments= p.getComments().stream().map(comment -> new CommentDTO(comment)).collect(Collectors.toSet());
 	}
 
 	public Integer getId() {
@@ -80,17 +85,11 @@ public class PostDTO {
 		this.user = user;
 	}
 
-	public Set<Comment> getComments() {
-		return comments;
+	public Set<ReactionDTO> getReactions() {
+		return reactions;
 	}
 
-	public void setComments(Set<Comment> comments) {
-		this.comments = comments;
+	public void setReactions(Set<ReactionDTO> reactions) {
+		this.reactions = reactions;
 	}
-
-	
-	
-	
-	
-	
 }
