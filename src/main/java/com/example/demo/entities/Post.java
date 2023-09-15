@@ -32,30 +32,30 @@ public class Post {
 	@Size(min = 2, max = 100, message = "Title must be between {min} and {max} characters long.")
 	private String title;
 	
-	
 	private String content;
 	
 	
 	private Date dateCreated;
 	
-	@JsonIgnore
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	@JoinColumn(name = "user")
 	private User user;
 	
 	@OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = {
+			CascadeType.REFRESH })	
+	private Set<Comment> comments = new HashSet<Comment>();
+	
+	@OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = {
 			CascadeType.REFRESH })
-			private Set<Comment> comments = new HashSet<Comment>();
-
+	private Set<Reaction> reactions = new HashSet<Reaction>();
 	
 	public Post() {
 		
 	}
 	
-
 	public Post(Integer id,
 			@Size(min = 2, max = 100, message = "Title must be between {min} and {max} characters long.") String title,
-			String content, Date dateCreated, User user, Set<Comment> comments) {
+			String content, Date dateCreated, User user, Set<Comment> comments, Set<Reaction> reactions) {
 		super();
 		this.id = id;
 		this.title = title;
@@ -63,8 +63,8 @@ public class Post {
 		this.dateCreated = dateCreated;
 		this.user = user;
 		this.comments = comments;
+		this.reactions = reactions;
 	}
-
 
 	public Integer getId() {
 		return id;
@@ -114,7 +114,13 @@ public class Post {
 	public void setComments(Set<Comment> comments) {
 		this.comments = comments;
 	}
-	
-	
 
+	public Set<Reaction> getReactions() {
+		return reactions;
+	}
+
+	public void setReactions(Set<Reaction> reactions) {
+		this.reactions = reactions;
+	}
+	
 }

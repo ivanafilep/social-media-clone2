@@ -1,6 +1,6 @@
 package com.example.demo.controllers;
 import javax.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -11,10 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.ServiceImplementation.RegularUserServiceImpl;
 import com.example.demo.dto.UpdatedUserDTO;
 import com.example.demo.dto.UserDTO;
 import com.example.demo.exceptions.ConfirmedPasswordException;
@@ -23,14 +21,18 @@ import com.example.demo.exceptions.UserWithEmailExistsException;
 import com.example.demo.exceptions.UserWithLastNameException;
 import com.example.demo.exceptions.UserWithNameException;
 import com.example.demo.exceptions.UserWithUsernameExistsException;
+import com.example.demo.services.RegularUserService;
 
 @RestController
 @RequestMapping(path = "project/regularusers")
 public class RegularUserController {
 	
-	@Autowired 
-	private RegularUserServiceImpl regUserService;
+	private final RegularUserService regUserService;
 	
+	public RegularUserController(RegularUserService regUserService) {
+		this.regUserService = regUserService;
+	}
+
 	@PostMapping
 	public ResponseEntity<?> create(@Valid @RequestBody UserDTO newUser) throws UserWithEmailExistsException, UserWithUsernameExistsException, ConfirmedPasswordException {
 		try {

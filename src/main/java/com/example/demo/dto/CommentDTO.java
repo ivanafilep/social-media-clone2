@@ -13,7 +13,7 @@ public class CommentDTO {
 	private Post post;
 	
 	private User user;
-
+	
 	public CommentDTO() {
 
 	}
@@ -58,6 +58,4 @@ public class CommentDTO {
 		this.user = user;
 	}
 	
-	
-
 }
