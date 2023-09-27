@@ -1,5 +1,9 @@
 package com.example.demo.dto;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import com.example.demo.entities.Comment;
 import com.example.demo.entities.Post;
 import com.example.demo.entities.User;
@@ -14,6 +18,8 @@ public class CommentDTO {
 	
 	private User user;
 	
+	private Set<ReactionDTO> reactions = new HashSet<ReactionDTO>();
+	
 	public CommentDTO() {
 
 	}
@@ -24,6 +30,7 @@ public class CommentDTO {
 		this.comment = c.getComment();
 		this.post = c.getPost();
 		this.user = c.getUser();
+		this.reactions= c.getReactions().stream().map(reactions -> new ReactionDTO(reactions)).collect(Collectors.toSet());
 	}
 
 	public Integer getId() {
@@ -57,5 +64,14 @@ public class CommentDTO {
 	public void setUser(User user) {
 		this.user = user;
 	}
+
+	public Set<ReactionDTO> getReactions() {
+		return reactions;
+	}
+
+	public void setReactions(Set<ReactionDTO> reactions) {
+		this.reactions = reactions;
+	}
+	
 	
 }

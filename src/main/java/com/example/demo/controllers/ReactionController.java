@@ -25,6 +25,13 @@ public class ReactionController {
     public ResponseEntity<?> createPostReaction(@PathVariable Integer postId, @RequestParam String reactionType, Authentication authentication ) throws Exception {
 		return new ResponseEntity<>(reactionService.createPostReaction(postId, reactionType, authentication.getName()),HttpStatus.OK);
     }
+	
+	@PostMapping("/comments/{commentId}")
+	public ResponseEntity<?> createCommentReaction(@PathVariable Integer commentId, @RequestParam String reactionType, Authentication authentication ) throws Exception {
+			return new ResponseEntity<>(reactionService.createCommentReaction(commentId, reactionType, authentication.getName()),HttpStatus.OK);
+	    }
+	
+	
 }
 
 
