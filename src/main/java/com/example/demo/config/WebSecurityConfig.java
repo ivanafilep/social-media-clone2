@@ -56,6 +56,7 @@ public class WebSecurityConfig {
 				.antMatchers(HttpMethod.POST, "/project/regularusers").permitAll()
 				.antMatchers(HttpMethod.POST, "/social-media/login").permitAll()
 				.antMatchers(HttpMethod.PUT, "/forgot-password").permitAll()
+				.antMatchers(HttpMethod.GET, "/project/regularusers/{id}").permitAll()
 				.anyRequest().authenticated();
 				
 				http.addFilterBefore(new JWTAuthorizationFilter(secretKey), UsernamePasswordAuthenticationFilter.class);

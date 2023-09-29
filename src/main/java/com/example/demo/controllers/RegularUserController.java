@@ -44,13 +44,14 @@ public class RegularUserController {
 		}
 	}
 	
+	//promeni da samo ja smem da updatujem sebe, a nikog drugog
 	@Secured("ROLE_REGULAR_USER")
 	@PutMapping
 	public ResponseEntity<UpdatedUserDTO> update(@RequestBody UpdatedUserDTO updatedUser, Authentication authentication) throws UserWithEmailExistsException, UserWithUsernameExistsException, UserWithNameException, UserWithLastNameException{
 		return new ResponseEntity<UpdatedUserDTO>(regUserService.update(updatedUser, authentication.getName()), HttpStatus.OK);
 	}
 	
-	//@Secured("ROLE_REGULAR_USER")
+	//razmisli ko sme ovo da radi
 	@GetMapping(path = "/{id}")
 	public ResponseEntity<?> getById(@PathVariable Integer id) throws UserDoesntExist {
 		return new ResponseEntity<>(regUserService.getById(id), HttpStatus.OK);
